@@ -1,0 +1,125 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, package and publish
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record toolchain
+        run: xcodebuild -version
+
+      - name: Derive version from the tag
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Check the tag matches MARKETING_VERSION
+        run: |
+          # A tag that disagrees with the version baked into the app would
+          # ship a bundle whose About box contradicts its own release page.
+          marketing=$(xcodebuild -project gerdoo-dyland.xcodeproj \
+            -scheme gerdoo-dyland -configuration Release -showBuildSettings 2>/dev/null \
+            | awk -F' = ' '/ MARKETING_VERSION/ {print $2; exit}' | tr -d ' ')
+          echo "tag=${{ steps.version.outputs.version }} MARKETING_VERSION=$marketing"
+          if [ "$marketing" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::Tag ${{ steps.version.outputs.tag }} does not match MARKETING_VERSION $marketing. Bump the version before tagging."
+            exit 1
+          fi
+
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project gerdoo-dyland.xcodeproj \
+            -scheme gerdoo-dyland \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            test
+
+      - name: Build Release (arm64)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project gerdoo-dyland.xcodeproj \
+            -scheme gerdoo-dyland \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            -derivedDataPath build \
+            clean build
+
+      - name: Package the DMG
+        id: package
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          app="build/Build/Products/Release/gerdoo-dyland.app"
+          dmg="gerdoo-dyland-${version}-arm64.dmg"
+
+          # Sanity-check what we are about to ship.
+          lipo -archs "$app/Contents/MacOS/gerdoo-dyland"
+          codesign --verify --deep --strict "$app"
+
+          rm -rf stage && mkdir stage
+          ditto "$app" "stage/gerdoo-dyland.app"
+          # Drag-to-install target.
+          ln -s /Applications stage/Applications
+
+          hdiutil create \
+            -volname "gerdoo-dyland ${version}" \
+            -srcfolder stage \
+            -ov -format UDZO -fs HFS+ \
+            "$dmg"
+          hdiutil verify "$dmg"
+
+          echo "dmg=$dmg" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the packaged app
+        run: |
+          set -euo pipefail
+          mnt=$(mktemp -d)
+          hdiutil attach "${{ steps.package.outputs.dmg }}" -nobrowse -readonly -mountpoint "$mnt"
+          # The signature must survive being copied into the image, and the
+          # bundle inside must be the architecture and version we claim.
+          codesign --verify --deep --strict "$mnt/gerdoo-dyland.app"
+          lipo -archs "$mnt/gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" \
+            "$mnt/gerdoo-dyland.app/Contents/Info.plist"
+          hdiutil detach "$mnt"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.version.outputs.tag }}"
+          version="${{ steps.version.outputs.version }}"
+          notes="docs/release-notes/${tag}.md"
+
+          # Hand-written notes are preferred; a tag pushed without them still
+          # publishes, with GitHub's generated summary as a fallback.
+          if [ -f "$notes" ]; then
+            notes_args=(--notes-file "$notes")
+          else
+            echo "::warning::No $notes found; falling back to generated notes."
+            notes_args=(--generate-notes)
+          fi
+
+          gh release create "$tag" \
+            --title "gerdoo-dyland ${version}" \
+            "${notes_args[@]}" \
+            "${{ steps.package.outputs.dmg }}#gerdoo-dyland ${version} (macOS 14+, Apple silicon)"
