@@ -281,7 +281,7 @@
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Dyland reads track information and sends playback commands to Music and Spotify so it can show Now Playing in the notch.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "gerdoo-dyland";
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gerdoo.dyland;
 				/* The shipped app is "gerdoo-dyland"; the Swift module stays
 				   "Dyland" so identifiers and `@testable import` remain valid
@@ -310,7 +310,7 @@
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Dyland reads track information and sends playback commands to Music and Spotify so it can show Now Playing in the notch.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "gerdoo-dyland";
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gerdoo.dyland;
 				/* The shipped app is "gerdoo-dyland"; the Swift module stays
 				   "Dyland" so identifiers and `@testable import` remain valid

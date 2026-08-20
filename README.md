@@ -155,6 +155,6 @@ To cut a release:
 git tag -a vX.Y.Z -m "gerdoo-dyland X.Y.Z" && git push origin vX.Y.Z
 ```
 
-`.github/workflows/release.yml` takes it from there: it refuses to publish if the tag disagrees with `MARKETING_VERSION`, runs the tests, builds arm64 Release, packages the DMG, verifies the signature and architecture inside the mounted image, and publishes the GitHub release using your notes file. A tag pushed without a notes file still publishes, using GitHub's generated summary.
+`.github/workflows/release.yml` takes it from there: it refuses to publish if the tag disagrees with `MARKETING_VERSION`, runs the tests, builds a universal (`x86_64 arm64`) Release, packages the DMG, and — inside the mounted image — verifies the signature and asserts both architecture slices are present before publishing the GitHub release using your notes file. The runner is Apple silicon, so the Intel slice is cross-compiled; that assertion is what stops a half-universal build from shipping quietly. A tag pushed without a notes file still publishes, using GitHub's generated summary.
 
 No signing secrets are needed: the app is ad-hoc signed, so CI builds it with no certificate in the runner.

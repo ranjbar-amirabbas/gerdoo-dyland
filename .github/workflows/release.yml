@@ -50,15 +50,19 @@ jobs:
             -destination 'platform=macOS' \
             test
 
-      - name: Build Release (arm64)
+      - name: Build Release (universal)
         run: |
           set -o pipefail
+          # Both slices, so one download serves Apple silicon and Intel. The
+          # runner is arm64; x86_64 is cross-compiled, which is why the
+          # verification step below asserts both slices are actually present
+          # rather than trusting the build settings.
           xcodebuild \
             -project gerdoo-dyland.xcodeproj \
             -scheme gerdoo-dyland \
             -configuration Release \
             -destination 'platform=macOS' \
-            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            ARCHS="x86_64 arm64" ONLY_ACTIVE_ARCH=NO \
             -derivedDataPath build \
             clean build
 
@@ -68,7 +72,7 @@ jobs:
           set -euo pipefail
           version="${{ steps.version.outputs.version }}"
           app="build/Build/Products/Release/gerdoo-dyland.app"
-          dmg="gerdoo-dyland-${version}-arm64.dmg"
+          dmg="gerdoo-dyland-${version}-universal.dmg"
 
           # Sanity-check what we are about to ship.
           lipo -archs "$app/Contents/MacOS/gerdoo-dyland"
@@ -96,7 +100,19 @@ jobs:
           # The signature must survive being copied into the image, and the
           # bundle inside must be the architecture and version we claim.
           codesign --verify --deep --strict "$mnt/gerdoo-dyland.app"
-          lipo -archs "$mnt/gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland"
+
+          # Assert both slices survived, rather than printing them and hoping
+          # someone reads the log. A universal DMG that quietly shipped one
+          # architecture would strand half the users it claims to serve.
+          archs=$(lipo -archs "$mnt/gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland")
+          echo "architectures: $archs"
+          for slice in x86_64 arm64; do
+            case " $archs " in
+              *" $slice "*) ;;
+              *) echo "::error::Universal build is missing the $slice slice (got: $archs)"; hdiutil detach "$mnt"; exit 1 ;;
+            esac
+          done
+
           /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" \
             "$mnt/gerdoo-dyland.app/Contents/Info.plist"
           hdiutil detach "$mnt"
@@ -122,4 +138,4 @@ jobs:
           gh release create "$tag" \
             --title "gerdoo-dyland ${version}" \
             "${notes_args[@]}" \
-            "${{ steps.package.outputs.dmg }}#gerdoo-dyland ${version} (macOS 14+, Apple silicon)"
+            "${{ steps.package.outputs.dmg }}#gerdoo-dyland ${version} (macOS 14+, universal: Apple silicon and Intel)"
