@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Dyland is intentionally NOT sandboxed for this MVP.
+
+	  Rationale (see README "Permissions & limitations"):
+	    * The File Shelf holds references to files the user drags in from any
+	      location. Outside the sandbox those URLs stay valid for the process
+	      lifetime with no security-scoped bookmark bookkeeping.
+	    * The media providers talk to Music.app and Spotify over Apple events.
+	      Sandboxed, each would need a temporary-exception entitlement.
+
+	  Consequence: the app cannot ship on the Mac App Store as configured.
+
+	  Hardened runtime IS enabled, so sending Apple events still requires the
+	  entitlement below plus the user granting Automation access at runtime.
+	-->
+	<key>com.apple.security.automation.apple-events</key>
+	<true/>
+</dict>
+</plist>
