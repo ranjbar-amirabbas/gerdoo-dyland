@@ -1,18 +1,19 @@
-# Dyland
+# gerdoo-dyland
 
 A macOS menu-bar utility that turns the MacBook notch into an interactive control centre: Now Playing, a drag-and-drop File Shelf, clipboard history, and Quick Actions. It collapses into the camera housing when idle and expands on hover, click, drag, or a track change.
 
 Built from scratch with public Apple APIs only. Swift, SwiftUI, and AppKit where SwiftUI cannot reach.
 
 - **Requires** macOS 14 or later. Built with Xcode 16+.
+- **Product name is `gerdoo-dyland`**; the Swift module and source folder stay `Dyland`, because a module name has to be a valid Swift identifier. `PRODUCT_MODULE_NAME` pins this in the project file.
 - **Works with and without a physical notch** — displays with no camera housing get a synthetic centred pill.
 
 ```bash
-xcodebuild -project Dyland.xcodeproj -scheme Dyland -configuration Debug build
+xcodebuild -project gerdoo-dyland.xcodeproj -scheme gerdoo-dyland -configuration Debug build
 ```
 
 ```bash
-xcodebuild -project Dyland.xcodeproj -scheme Dyland test
+xcodebuild -project gerdoo-dyland.xcodeproj -scheme gerdoo-dyland test
 ```
 
 ## What it does
@@ -30,7 +31,7 @@ xcodebuild -project Dyland.xcodeproj -scheme Dyland test
 ## Architecture
 
 ```
-Dyland/
+Dyland/                 # Swift module sources
   App/            Lifecycle and the object graph (AppEnvironment)
   Core/           NotchState, the reducer and state machine, design tokens, logging
   Notch/          Panel, host view, geometry, screen observer, and the notch views
@@ -61,11 +62,11 @@ AppKit is confined to `Notch/`, `System/MenuBarController`, `Services/AppleScrip
 `NotchHostView` carries the only genuinely unusual code in the project, and both overrides are load-bearing:
 
 1. **Selective hit testing.** The panel is always the size of the fully expanded UI. Without an override, that transparent rectangle would swallow every click in the top centre of the screen. `hitTest(_:)` returns `nil` outside the region the notch currently occupies, so everything else falls through to the app underneath.
-2. **A drag catch zone.** macOS has no public way to observe a drag *before* it reaches one of your windows. The panel therefore registers a catch zone that is deliberately wider and taller than the collapsed pill, and expands the moment a drag enters it. Drags that never come near the notch are invisible to Dyland, by design.
+2. **A drag catch zone.** macOS has no public way to observe a drag *before* it reaches one of your windows. The panel therefore registers a catch zone that is deliberately wider and taller than the collapsed pill, and expands the moment a drag enters it. Drags that never come near the notch are invisible to the app, by design.
 
 ## Permissions
 
-Dyland asks for as little as possible.
+The app asks for as little as possible.
 
 | Permission | When | What breaks without it |
 |---|---|---|
@@ -74,21 +75,21 @@ Dyland asks for as little as possible.
 
 **Not requested:** Accessibility, Screen Recording, Full Disk Access, Camera, Microphone, Contacts, or network access beyond fetching Spotify artwork over HTTPS.
 
-Dyland is **not sandboxed** (hardened runtime only). Two reasons: the File Shelf holds references to files from anywhere the user drags them, which outside the sandbox stay valid with no security-scoped bookmark bookkeeping; and the media providers speak Apple events. As configured, the app cannot ship on the Mac App Store.
+The app is **not sandboxed** (hardened runtime only). Two reasons: the File Shelf holds references to files from anywhere the user drags them, which outside the sandbox stay valid with no security-scoped bookmark bookkeeping; and the media providers speak Apple events. As configured, the app cannot ship on the Mac App Store.
 
 ## Limitations
 
 These are real constraints of the public API surface, not shortcuts. Each one is commented at the relevant call site too.
 
-**There is no system-wide Now Playing API.** `MediaRemote` is private *and*, since macOS 15.4, entitlement-gated — unentitled processes get nothing back from it. Dyland therefore integrates per application behind `MediaProvider`, shipping Music and Spotify. Anything else playing audio (a browser tab, VLC, a game) is invisible. Adding a player means adding a conformer.
+**There is no system-wide Now Playing API.** `MediaRemote` is private *and*, since macOS 15.4, entitlement-gated — unentitled processes get nothing back from it. It therefore integrates per application behind `MediaProvider`, shipping Music and Spotify. Anything else playing audio (a browser tab, VLC, a game) is invisible. Adding a player means adding a conformer.
 
 **Drags are only seen once they reach the catch zone.** No public API reports a drag session in progress elsewhere on screen, so the notch cannot expand while a file is still halfway up the display.
 
-**The clipboard is polled.** `NSPasteboard` posts no change notification of any kind. Dyland compares `changeCount` once a second with a 0.5 s tolerance so the kernel can coalesce the wakeup, and the timer exists only while the Clipboard module is enabled. Only text and file URLs are captured; images and rich text are out of scope for now.
+**The clipboard is polled.** `NSPasteboard` posts no change notification of any kind. The app compares `changeCount` once a second with a 0.5 s tolerance so the kernel can coalesce the wakeup, and the timer exists only while the Clipboard module is enabled. Only text and file URLs are captured; images and rich text are out of scope for now.
 
 **The waveform is procedural, not real audio.** Reading another application's audio levels requires a system audio tap and the screen-recording class of permission that comes with it. `AudioLevelProvider` and `WaveformView.levels` are the seam: pass sampled values and the bars follow them instead of self-animating.
 
-**Screenshot opens the system Screenshot app** rather than running `screencapture -i`. A capture started by Dyland is attributed to Dyland, which would make macOS demand Screen Recording permission for a feature that does not need it.
+**Screenshot opens the system Screenshot app** rather than running `screencapture -i`. A capture the app starts itself is attributed to the app, which would make macOS demand Screen Recording permission for a feature that does not need it.
 
 **The notch stays visible over full-screen apps.** `.fullScreenAuxiliary` is the closest public behaviour. Detecting that another application has gone full screen on a given display is not publicly exposed, and the available heuristic (the menu bar being hidden) also matches the "automatically hide the menu bar" preference, which would break the app for those users.
 
@@ -113,9 +114,9 @@ The waveform is the one place where this took real work. A four-bar SwiftUI `Can
 Debug builds honour three environment variables so the UI can be exercised without real data:
 
 ```bash
-DYLAND_DEBUG_MEDIA=1 ./Dyland.app/Contents/MacOS/Dyland          # mock Now Playing
-DYLAND_DEBUG_SECTION=fileShelf ./Dyland.app/Contents/MacOS/Dyland # open a section at launch
-DYLAND_DEBUG_SHELF_SEED="/path/a:/path/b" ./Dyland.app/Contents/MacOS/Dyland
+DYLAND_DEBUG_MEDIA=1 ./gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland          # mock Now Playing
+DYLAND_DEBUG_SECTION=fileShelf ./gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland # open a section at launch
+DYLAND_DEBUG_SHELF_SEED="/path/a:/path/b" ./gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland
 ```
 
 Logs go to the unified log under the `com.gerdoo.dyland` subsystem, split into `app`, `notch`, `media`, `shelf`, `clipboard`, `actions`, and `settings` categories:

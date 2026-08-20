@@ -60,7 +60,7 @@ struct NotchRootView: View {
             .contentShape(shape)
             .onTapGesture { stateMachine.send(.clicked) }
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Dyland notch")
+            .accessibilityLabel("\(AppInfo.displayName) notch")
             .accessibilityHint(state.isOpen ? "Click to collapse" : "Click to expand")
     }
 

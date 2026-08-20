@@ -13,7 +13,7 @@ enum MediaProviderError: LocalizedError, Equatable {
         case .notInstalled(let app):
             return "\(app) is not installed."
         case .automationDenied(let app):
-            return "Dyland needs permission to control \(app). Grant it in System Settings ▸ Privacy & Security ▸ Automation."
+            return "\(AppInfo.displayName) needs permission to control \(app). Grant it in System Settings ▸ Privacy & Security ▸ Automation."
         case .scriptingFailed(let app, let detail):
             return "\(app) did not respond: \(detail)"
         }

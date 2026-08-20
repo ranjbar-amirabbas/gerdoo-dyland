@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		DE0000000000000000000005 /* Dyland.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dyland.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE0000000000000000000005 /* gerdoo-dyland.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "gerdoo-dyland.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE0000000000000000000011 /* DylandTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DylandTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE000000000000000000001B /* Dyland.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Dyland.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,7 +48,7 @@
 		DE0000000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DE0000000000000000000005 /* Dyland.app */,
+				DE0000000000000000000005 /* gerdoo-dyland.app */,
 				DE0000000000000000000011 /* DylandTests.xctest */,
 			);
 			name = Products;
@@ -65,9 +65,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DE0000000000000000000004 /* Dyland */ = {
+		DE0000000000000000000004 /* gerdoo-dyland */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DE0000000000000000000009 /* Build configuration list for PBXNativeTarget "Dyland" */;
+			buildConfigurationList = DE0000000000000000000009 /* Build configuration list for PBXNativeTarget "gerdoo-dyland" */;
 			buildPhases = (
 				DE0000000000000000000006 /* Sources */,
 				DE0000000000000000000007 /* Frameworks */,
@@ -80,9 +80,9 @@
 			fileSystemSynchronizedGroups = (
 				DE000000000000000000000F /* Dyland */,
 			);
-			name = Dyland;
-			productName = Dyland;
-			productReference = DE0000000000000000000005 /* Dyland.app */;
+			name = "gerdoo-dyland";
+			productName = "gerdoo-dyland";
+			productReference = DE0000000000000000000005 /* gerdoo-dyland.app */;
 			productType = "com.apple.product-type.application";
 		};
 		DE0000000000000000000010 /* DylandTests */ = {
@@ -139,7 +139,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DE0000000000000000000004 /* Dyland */,
+				DE0000000000000000000004 /* gerdoo-dyland */,
 				DE0000000000000000000010 /* DylandTests */,
 			);
 		};
@@ -182,7 +182,7 @@
 /* Begin PBXTargetDependency section */
 		DE0000000000000000000018 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DE0000000000000000000004 /* Dyland */;
+			target = DE0000000000000000000004 /* gerdoo-dyland */;
 			targetProxy = DE0000000000000000000019 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -193,7 +193,7 @@
 			containerPortal = DE0000000000000000000001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = DE0000000000000000000004;
-			remoteInfo = Dyland;
+			remoteInfo = "gerdoo-dyland";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -280,8 +280,13 @@
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Dyland reads track information and sends playback commands to Music and Spotify so it can show Now Playing in the notch.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				MARKETING_VERSION = 0.1;
+				INFOPLIST_KEY_CFBundleDisplayName = "gerdoo-dyland";
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gerdoo.dyland;
+				/* The shipped app is "gerdoo-dyland"; the Swift module stays
+				   "Dyland" so identifiers and `@testable import` remain valid
+				   Swift names. */
+				PRODUCT_MODULE_NAME = Dyland;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -304,8 +309,13 @@
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Dyland reads track information and sends playback commands to Music and Spotify so it can show Now Playing in the notch.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				MARKETING_VERSION = 0.1;
+				INFOPLIST_KEY_CFBundleDisplayName = "gerdoo-dyland";
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gerdoo.dyland;
+				/* The shipped app is "gerdoo-dyland"; the Swift module stays
+				   "Dyland" so identifiers and `@testable import` remain valid
+				   Swift names. */
+				PRODUCT_MODULE_NAME = Dyland;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -326,7 +336,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dyland.app/Contents/MacOS/Dyland";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland";
 			};
 			name = Debug;
 		};
@@ -344,7 +354,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dyland.app/Contents/MacOS/Dyland";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/gerdoo-dyland.app/Contents/MacOS/gerdoo-dyland";
 			};
 			name = Release;
 		};
@@ -360,7 +370,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DE0000000000000000000009 /* Build configuration list for PBXNativeTarget "Dyland" */ = {
+		DE0000000000000000000009 /* Build configuration list for PBXNativeTarget "gerdoo-dyland" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DE000000000000000000000A /* Debug */,

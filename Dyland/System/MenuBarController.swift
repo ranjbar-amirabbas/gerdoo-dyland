@@ -34,10 +34,10 @@ final class MenuBarController: NSObject {
         guard let button = statusItem.button else { return }
         button.image = NSImage(
             systemSymbolName: "rectangle.topthird.inset.filled",
-            accessibilityDescription: "Dyland"
+            accessibilityDescription: AppInfo.displayName
         )
         button.image?.isTemplate = true
-        button.toolTip = "Dyland"
+        button.toolTip = AppInfo.displayName
     }
 
     private func buildMenu() -> NSMenu {
@@ -49,7 +49,7 @@ final class MenuBarController: NSObject {
         menu.addItem(.separator())
         menu.addItem(item(title: "Clear File Shelf", key: "", action: #selector(handleClearShelf)))
         menu.addItem(.separator())
-        menu.addItem(item(title: "Quit Dyland", key: "q", action: #selector(handleQuit)))
+        menu.addItem(item(title: "Quit \(AppInfo.displayName)", key: "q", action: #selector(handleQuit)))
         return menu
     }
 

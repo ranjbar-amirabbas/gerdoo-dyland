@@ -22,7 +22,7 @@ struct TransportControls: View {
         .allowsHitTesting(isEnabled)
         // Explained rather than silently greyed out: without Automation
         // permission Dyland can read metadata but not send commands.
-        .help(isEnabled ? "" : "Dyland needs Automation permission to control playback")
+        .help(isEnabled ? "" : "\(AppInfo.displayName) needs Automation permission to control playback")
     }
 
     private func button(_ symbol: String, size: CGFloat, label: String, action: @escaping () -> Void) -> some View {

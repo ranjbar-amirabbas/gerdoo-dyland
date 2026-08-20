@@ -6,9 +6,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "DE0000000000000000000004"
-               BuildableName = "Dyland.app"
-               BlueprintName = "Dyland"
-               ReferencedContainer = "container:Dyland.xcodeproj">
+               BuildableName = "gerdoo-dyland.app"
+               BlueprintName = "gerdoo-dyland"
+               ReferencedContainer = "container:gerdoo-dyland.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry buildForTesting = "YES" buildForRunning = "NO" buildForProfiling = "NO" buildForArchiving = "NO" buildForAnalyzing = "YES">
@@ -17,7 +17,7 @@
                BlueprintIdentifier = "DE0000000000000000000010"
                BuildableName = "DylandTests.xctest"
                BlueprintName = "DylandTests"
-               ReferencedContainer = "container:Dyland.xcodeproj">
+               ReferencedContainer = "container:gerdoo-dyland.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -30,7 +30,7 @@
                BlueprintIdentifier = "DE0000000000000000000010"
                BuildableName = "DylandTests.xctest"
                BlueprintName = "DylandTests"
-               ReferencedContainer = "container:Dyland.xcodeproj">
+               ReferencedContainer = "container:gerdoo-dyland.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -40,9 +40,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DE0000000000000000000004"
-            BuildableName = "Dyland.app"
-            BlueprintName = "Dyland"
-            ReferencedContainer = "container:Dyland.xcodeproj">
+            BuildableName = "gerdoo-dyland.app"
+            BlueprintName = "gerdoo-dyland"
+            ReferencedContainer = "container:gerdoo-dyland.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -51,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "DE0000000000000000000004"
-            BuildableName = "Dyland.app"
-            BlueprintName = "Dyland"
-            ReferencedContainer = "container:Dyland.xcodeproj">
+            BuildableName = "gerdoo-dyland.app"
+            BlueprintName = "gerdoo-dyland"
+            ReferencedContainer = "container:gerdoo-dyland.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

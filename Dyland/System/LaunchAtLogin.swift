@@ -36,9 +36,9 @@ enum LaunchAtLogin {
     static var statusDescription: String? {
         switch SMAppService.mainApp.status {
         case .requiresApproval:
-            return "Approve Dyland in System Settings ▸ General ▸ Login Items."
+            return "Approve \(AppInfo.displayName) in System Settings ▸ General ▸ Login Items."
         case .notFound:
-            return "Move Dyland to your Applications folder to enable this."
+            return "Move \(AppInfo.displayName) to your Applications folder to enable this."
         default:
             return nil
         }

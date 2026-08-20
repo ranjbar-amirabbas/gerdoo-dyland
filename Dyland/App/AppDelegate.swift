@@ -58,7 +58,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         seedDebugShelfIfRequested()
         openDebugSectionIfRequested()
 
-        Log.app.info("Dyland launched")
+        Log.app.info("\(AppInfo.displayName, privacy: .public) \(AppInfo.version, privacy: .public) launched")
     }
 
     func applicationWillTerminate(_ notification: Notification) {

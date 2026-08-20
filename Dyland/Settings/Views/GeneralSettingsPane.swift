@@ -8,7 +8,7 @@ struct GeneralSettingsPane: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Launch Dyland at login", isOn: Binding(
+                Toggle("Launch \(AppInfo.displayName) at login", isOn: Binding(
                     get: { settings.launchAtLogin },
                     set: { applyLaunchAtLogin($0) }
                 ))

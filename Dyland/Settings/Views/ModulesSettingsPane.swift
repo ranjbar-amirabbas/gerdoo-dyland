@@ -18,7 +18,7 @@ struct ModulesSettingsPane: View {
             }
 
             Section {
-                Text("Now Playing reads Music and Spotify over Apple events. macOS will ask for Automation permission the first time Dyland sends a playback command.")
+                Text("Now Playing reads Music and Spotify over Apple events. macOS will ask for Automation permission the first time \(AppInfo.displayName) sends a playback command.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text("Clipboard history is kept in memory only, up to 10 entries, and is never written to disk.")
