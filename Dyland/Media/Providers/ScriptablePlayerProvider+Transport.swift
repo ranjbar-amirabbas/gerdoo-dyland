@@ -20,7 +20,7 @@ extension ScriptablePlayerProvider {
             return
         }
         do {
-            _ = try await runner.run(Scripts.command(verb, for: configuration))
+            try await runner.run(Scripts.command(verb, for: configuration))
             await refresh()
         } catch AppleScriptRunner.Failure.permissionDenied {
             warnAboutPermissionOnce()

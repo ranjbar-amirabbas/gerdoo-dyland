@@ -23,8 +23,8 @@ extension ScriptablePlayerProvider {
 
     private func embeddedArtwork() async -> NSImage? {
         do {
-            let descriptor = try await runner.run(Scripts.artwork(for: configuration))
-            guard let data = descriptor.data as Data?, !data.isEmpty else { return nil }
+            let data = try await runner.runReturningData(Scripts.artwork(for: configuration))
+            guard !data.isEmpty else { return nil }
             return NSImage(data: data)
         } catch AppleScriptRunner.Failure.permissionDenied {
             warnAboutPermissionOnce()

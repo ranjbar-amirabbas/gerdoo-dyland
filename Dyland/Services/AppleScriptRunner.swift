@@ -32,21 +32,43 @@ final class AppleScriptRunner: @unchecked Sendable {
         static let timedOut = -1712
     }
 
-    func run(_ source: String) async throws -> NSAppleEventDescriptor {
+    /// Runs a script and discards its result.
+    func run(_ source: String) async throws {
+        _ = try await extract(source) { _ in 0 }
+    }
+
+    /// Runs a script that returns text. An empty string means "the script ran
+    /// but had nothing to say", which several of these scripts do deliberately.
+    func runReturningString(_ source: String) async throws -> String {
+        try await extract(source) { $0.stringValue ?? "" }
+    }
+
+    /// Runs a script that returns raw bytes (embedded artwork).
+    func runReturningData(_ source: String) async throws -> Data {
+        try await extract(source) { $0.data }
+    }
+
+    /// Runs `source` and pulls a `Sendable` value out of the result *on the
+    /// script queue*.
+    ///
+    /// `NSAppleEventDescriptor` is not `Sendable`, so it must never cross back
+    /// to the caller's actor — under the Swift 6 language mode that is an error,
+    /// not a warning. Extracting here keeps the descriptor confined to the one
+    /// thread that produced it, and leaves the runner's public surface as
+    /// nothing but strings, bytes and errors.
+    private func extract<T: Sendable>(
+        _ source: String,
+        _ transform: @escaping @Sendable (NSAppleEventDescriptor) -> T
+    ) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 do {
-                    continuation.resume(returning: try self.execute(source))
+                    continuation.resume(returning: transform(try self.execute(source)))
                 } catch {
                     continuation.resume(throwing: error)
                 }
             }
         }
-    }
-
-    /// Convenience for scripts that return a string.
-    func runReturningString(_ source: String) async throws -> String {
-        try await run(source).stringValue ?? ""
     }
 
     private func execute(_ source: String) throws -> NSAppleEventDescriptor {
