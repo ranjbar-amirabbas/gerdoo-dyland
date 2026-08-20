@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test
+    # macOS 15 runners ship Xcode 16, which this project requires: the
+    # project file uses objectVersion 77 (file-system-synchronized groups).
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project gerdoo-dyland.xcodeproj \
+            -scheme gerdoo-dyland \
+            -configuration Debug \
+            -destination 'platform=macOS' \
+            test
+
+      - name: Fail on Swift warnings
+        run: |
+          set -o pipefail
+          # A clean build must be warning-free; the project has zero today and
+          # this keeps it that way.
+          output=$(xcodebuild \
+            -project gerdoo-dyland.xcodeproj \
+            -scheme gerdoo-dyland \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            clean build 2>&1)
+          echo "$output" | grep -E "warning:" | grep -v "AppIntents" > warnings.txt || true
+          if [ -s warnings.txt ]; then
+            echo "::error::Build produced warnings:"
+            cat warnings.txt
+            exit 1
+          fi
+          echo "No warnings."

@@ -126,3 +126,21 @@ log stream --predicate 'subsystem == "com.gerdoo.dyland"' --info
 ```
 
 The project uses Xcode's file-system-synchronized groups, so new source files are picked up automatically — the `.pbxproj` never needs editing.
+
+## Releasing
+
+CI does the work. Every push and pull request runs the test suite and a clean Release build that fails on any Swift warning.
+
+To cut a release:
+
+1. Bump `MARKETING_VERSION` in `gerdoo-dyland.xcodeproj/project.pbxproj` (both the Debug and Release configurations of the app target — it is the only place the version lives).
+2. Write the notes at `docs/release-notes/vX.Y.Z.md`.
+3. Merge that through a pull request, then tag the merge commit and push the tag:
+
+```bash
+git tag -a vX.Y.Z -m "gerdoo-dyland X.Y.Z" && git push origin vX.Y.Z
+```
+
+`.github/workflows/release.yml` takes it from there: it refuses to publish if the tag disagrees with `MARKETING_VERSION`, runs the tests, builds arm64 Release, packages the DMG, verifies the signature and architecture inside the mounted image, and publishes the GitHub release using your notes file. A tag pushed without a notes file still publishes, using GitHub's generated summary.
+
+No signing secrets are needed: the app is ad-hoc signed, so CI builds it with no certificate in the runner.
