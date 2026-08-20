@@ -64,6 +64,20 @@ AppKit is confined to `Notch/`, `System/MenuBarController`, `Services/AppleScrip
 1. **Selective hit testing.** The panel is always the size of the fully expanded UI. Without an override, that transparent rectangle would swallow every click in the top centre of the screen. `hitTest(_:)` returns `nil` outside the region the notch currently occupies, so everything else falls through to the app underneath.
 2. **A drag catch zone.** macOS has no public way to observe a drag *before* it reaches one of your windows. The panel therefore registers a catch zone that is deliberately wider and taller than the collapsed pill, and expands the moment a drag enters it. Drags that never come near the notch are invisible to the app, by design.
 
+## Installing a build
+
+Releases ship an ad-hoc signed, un-notarized DMG, so macOS blocks the first launch with *"Apple could not verify this app is free of malware."*
+
+Drag the app into `/Applications` first — launching it from the mounted disk image fails for a separate reason with an identical-looking dialog — then either clear the quarantine flag:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/gerdoo-dyland.app
+```
+
+…or open it once, dismiss the warning, and click **Open Anyway** in **System Settings ▸ Privacy & Security**.
+
+Right-clicking the app and choosing **Open** does *not* work on macOS 15 or later; Apple removed that bypass.
+
 ## Permissions
 
 The app asks for as little as possible.
